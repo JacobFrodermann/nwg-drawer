@@ -254,7 +254,7 @@ func flowBoxButton(entry desktopEntry) *gtk.Button {
 	var img *gtk.Image
 	var err error
 
-	if false && entry.Icon != "" {
+	if entry.Icon != "" {
 		pixbuf, err = createPixbuf(entry.Icon, *iconSize)
 		if err != nil || pixbuf == nil {
 			log.Warnf("Cannot load icon %q for %q: %v", entry.Icon, entry.Name, err)
@@ -267,8 +267,7 @@ func flowBoxButton(entry desktopEntry) *gtk.Button {
 		img = gtk.NewImageFromIconName("image-missing", int(gtk.IconSizeDialog))
 	}
 
-	//button.SetImage(img)
-	_ = img
+	button.SetImage(img)
 	button.SetImagePosition(gtk.PosTop)
 	name := entry.NameLoc
 	if len(name) > 20 {

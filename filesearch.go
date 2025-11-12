@@ -25,11 +25,7 @@ type fileSearchRes struct {
 }
 
 func searchFs(ctx context.Context) {
-
-	log.Info("searching FS")
 	fileSearchResultFlowBoxLock.Lock()
-	log.Info("accquried FS lock")
-
 	defer fileSearchResultFlowBoxLock.Unlock()
 
 	// check if a new search was made
@@ -39,7 +35,6 @@ func searchFs(ctx context.Context) {
 	default:
 
 		fileWG.Add(1)
-		log.Info("setting up Search Result Container")
 		glib.IdleAdd(func() {
 			defer fileWG.Done()
 
@@ -52,7 +47,6 @@ func searchFs(ctx context.Context) {
 		})
 
 		fileWG.Wait()
-		log.Info("setting Up Done")
 
 		fileSearchResults = nil
 		userDirButtons = make(map[string]*gtk.Box)
@@ -64,7 +58,6 @@ func searchFs(ctx context.Context) {
 			}
 		}
 
-		log.Info("Scheduling Button creation")
 		for _, searchRes := range fileSearchResults {
 			log.Debugf("Path: %s", searchRes)
 
@@ -75,15 +68,12 @@ func searchFs(ctx context.Context) {
 
 		fileWG.Wait()
 
-		log.Info("finished Button creation")
-
 		fileWG.Add(1)
 		glib.IdleAdd(func() {
 			defer fileWG.Done()
 
 			select {
 			case <-ctx.Done():
-				log.Info("search was canceld")
 				return
 			default:
 				if len(fileSearchResultFlowBox.Children()) == 0 {
@@ -105,7 +95,6 @@ func searchFs(ctx context.Context) {
 		})
 
 		// wait for all operations to complete before unlocking the mutex for next search
-		log.Info("File Search Done")
 		fileWG.Wait()
 	}
 }
@@ -116,7 +105,6 @@ func createFileSearchResultButtonFunc(ctx context.Context, index int) func() {
 
 		select {
 		case <-ctx.Done():
-			log.Info("exiting btn creation")
 			// this safe cause there is at most one scheduled operation
 			for range len(fileSearchResults) - index - 1 {
 				fileWG.Done()
