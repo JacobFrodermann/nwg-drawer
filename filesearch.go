@@ -58,6 +58,10 @@ func searchFs(ctx context.Context) {
 			}
 		}
 
+		if len(fileSearchResults) == 0 {
+			return
+		}
+
 		for _, searchRes := range fileSearchResults {
 			log.Debugf("Path: %s", searchRes)
 
